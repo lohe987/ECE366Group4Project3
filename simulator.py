@@ -136,7 +136,7 @@ imm_mux = {"000": -19
 
 if __name__ == "__main__":
     cpu1 = CPU()
-    cpu1 = load_program(cpu1, "sample_program_machine.ctz", "sample_memory.txt")
+    cpu1 = load_program(cpu1, "prog1machinecode.txt", "sample_memory.txt")
     print(cpu1.memory[0:5])
     cpu1 = run_program(cpu1)
     print(cpu1.R)
