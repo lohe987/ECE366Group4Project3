@@ -25,7 +25,8 @@ def load_program(cpu, instr_file_name, memory_file_name):
         line = line.strip()
         if len(line) < 1 or line.startswith("#"):
             continue
-        cpu.instructions.append(line)
+        line = line.split(" ")
+        cpu.instructions.append(line[0])
 
     for line in memory_file:
         line = line.strip()
@@ -52,11 +53,11 @@ def run_program(cpu):
             print("ERROR: Parity Bit Error")
             sys.exit()
 
-        if instr[1:8] == "1110 111":
-			cpu.R[3] = cpu.R[3] ^ cpu.R[2]
-			cnt = bin(cpu.R[3]).count("1")
-			cnt = 32 - cnt
-			cpu.R[3] = cnt
+        if instr[1:8] == "1110111":
+            cpu.R[3] = cpu.R[3]^cpu.R[2]
+            cnt = bin(cpu.R[3]).count("1")
+            cnt = 32 - cnt
+            cpu.R[3] = cnt
         elif instr[1:6] == "01100":
             # Add instruction
             Rx = registers[instr[4:6]]
@@ -67,7 +68,7 @@ def run_program(cpu):
         elif instr[1:6] == "01101":
             # Sub R3 instruction
             Rx = registers[instr[6:8]]
-            cpu.R[Rx] = cpu.R[3] - cpu.R[Rx]
+            cpu.R[3] = cpu.R[3] - cpu.R[Rx] # R3 = R3 - RX
             cpu.PC = cpu.PC + 1
             cpu.DIC = cpu.DIC + 1
         elif instr[1:4] == "001":
@@ -86,21 +87,21 @@ def run_program(cpu):
             cpu.DIC = cpu.DIC + 1
         elif instr[1:4] == "000":
             # Init instruction
-            Rx = registers[instr[4:5]]
-            cpu.R[Rx] = instr[5:8]
+            Rx = registers[instr[3:5]] # Bit 4 picks whether or not this should be
+            cpu.R[Rx] = int(instr[5:8], 2) # Cast the imm value into base ten
             cpu.PC = cpu.PC + 1
             cpu.DIC = cpu.DIC + 1
         elif instr[1:3] == "11":
             # Branch Equal R0
             Rx = registers[instr[3:5]]
-			imm = imm_mux[instr[5:8]]
+            imm = imm_mux[instr[5:8]]
             if cpu.R[Rx] == cpu.R[0]:
             	cpu.PC = cpu.PC + imm
             cpu.DIC = cpu.DIC + 1
         elif instr[1:4] == "100":
-		    # Add immediate 
+		    # Add immediate
             Rx = registers[instr[4:6]]
-            imm = registers[instr[6:8]]
+            imm = registers[instr[6:8]] # imm value is [0,3] in this case encoded the same way as the registers
             cpu.R[Rx] = cpu.R[Rx] + imm
             cpu.PC = cpu.PC + 1
             cpu.DIC = cpu.DIC + 1
@@ -110,7 +111,7 @@ def run_program(cpu):
             Ry = registers[instr[6:8]]
             if cpu.R[Rx] < cpu.R[Ry]:
                 cpu.R[0] = 1
-            else
+            else:
                 cpu.R[0] = 0
             cpu.PC = cpu.PC + 1
             cpu.DIC = cpu.DIC + 1
@@ -118,6 +119,11 @@ def run_program(cpu):
         else:
             print("Error Unknown command")
             sys.exit()
+
+        # Check if end of program
+        if cpu.PC >= len(cpu.instructions):
+            finished = True
+
     return cpu
 
 registers = {"00" : 0,
@@ -125,20 +131,20 @@ registers = {"00" : 0,
              "10" : 2,
              "11" : 3}
 
-imm_mux = {"000": -19
-		   "001": -12
-		   "010": -7
-		   "011": -6
-		   "100": 2
-		   "101": 10
-		   "110": 12
+imm_mux = {"000": -19,
+		   "001": -12,
+		   "010": -7,
+		   "011": -6,
+		   "100": 2,
+		   "101": 10,
+		   "110": 12,
 		   "111": 18}
 
 if __name__ == "__main__":
     cpu1 = CPU()
-    cpu1 = load_program(cpu1, "prog1machinecode.txt", "sample_memory.txt")
-    print(cpu1.memory[0:5])
+    cpu1 = load_program(cpu1, "simpleProgram.txt", "simpleMemory.txt")
+    #print(cpu1.memory[0:5])
     cpu1 = run_program(cpu1)
-    print(cpu1.R)
-    print(cpu1.DIC)
+    print("Registers: " + str(cpu1.R))
+    print("DIC: " + str(cpu1.DIC))
     print(cpu1.memory[0:5])
