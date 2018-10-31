@@ -54,10 +54,11 @@ def run_program(cpu):
             sys.exit()
 
         if instr[1:8] == "1110111":
-            cpu.R[3] = cpu.R[3]^cpu.R[2]
-            cnt = bin(cpu.R[3]).count("1")
-            cnt = 32 - cnt
-            cpu.R[3] = cnt
+            cpu.R[3] = cpu.R[3] ^ cpu.R[2]
+            cnt = str(bin(cpu.R[3])).count("1")
+            cpu.R[3] = 16 - cnt # 16 bit integers
+            cpu.PC = cpu.PC + 1
+            cpu.DIC = cpu.DIC + 1
         elif instr[1:6] == "01100":
             # Add instruction
             Rx = registers[instr[4:6]]
