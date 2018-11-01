@@ -1,64 +1,67 @@
+# program 2 BMC
 # ed 
 
 Assembly:			Machine Code:
-init r1, 7			 (0)000 1 111
-addi r1, 3			 (1)100 01 10
+init r1, 7			 (0)000 1 111		# r1 = 7
+addi r1, 3			 (0)100 01 11		# r1 = 7 + 3 = 10
 addR r1				 (1)01100 01		# r2 = 10 + 10
 addR r2				 (1)01100 10		# r2 = r2 + r2 = 40
 addR r2				 (1)01100 10		# r2 = r2 + r2 = 80
 addR2 r1			 (0)01110 01		# r2 = r2 + 10 = 90
-addR2 r1			 (1)01110 01		# r2 = r2 + 10 = 100
+addR2 r1			 (0)01110 01		# r2 = r2 + 10 = 100
 init r1, 7			 (0)000 1 111		# r1 = 7
-addi r1, 1			 (0)100 10 00		# r1 = 8
+addi r1, 1			 (1)100 10 01		# r1 = 8
 addR2 r1			 (0)01110 01		# r2 = r2 + 8 = 108
 init r1, 7			 (0)000 1 111		# r1 = 7
-str r2, r1			 (1)010 10 01		# mem[7] = 108	
+str r2, r1			 (1)010 10 01		# mem[r1] = mem[7] = 108	
 				
-init r1, 3			(0)000   1  011		# r1 = 3
+init r1, 3			(1)000   1  011		# r1 = 3
 ld r2, (r1)			(1)001  10   01		# r2 = mem[3] = T
 init r1, 7			(0)000   1  111		# r1 = 7
-addi r1, 1			(0)100  01   00		# r1 = 7 + 1 = 8
+addi r1, 1			(0)100  01   01		# r1 = 7 + 1 = 8
 init r0, 6			(0)000   0  110		# mem[6] will be our ptr
 str r1, (r0)			(0)010  01   00		# mem[6] <=  8
 loop:	
 ld r3, (r1)			(0)001  11   01      	# r3 = mem[8] = Pattern_Arr
 scr r3, r2 			(0)111  01   11      	# find score r3 and str in r3
-init r1, 4			(1)000   1  100		# r1 = 4
-ld r0, (r1)			(0)001  00   10		# r0 = mem[4] = S (highest score)
-beqR0, r3, equal		(1)11   11  101	 	# if new scr == S, go to equal
+init r1, 4			(0)000   1  100		# r1 = 4
+ld r0, (r1)			(0)001  00   01		# r0 = mem[4] = S (highest score)
+beqR0, r3, equal		(0)11   11  100	 	# if new scr == S, go to equal
+init r1, 1			(0)000   1  001		# redundant instr to allow jump same imm
+init r1, 1			(0)000	 1  001		# redundant
 sltR0 r0, r3			(0)101  00   11		# if new scr > S, r0 = 1
-init r1, 1			(1)000   1  001		# r1 = 1
-beqR0 r1 new			(0)11   01  110		# go to new if new scr > S
+init r1, 1			(0)000   1  001		# r1 = 1
+beqR0 r1 new			(1)11   01  100		# go to new if new scr > S
 							# else, we go to next pattern
 jump3: 
 init r0, 6			(0)000   0  110       	# r0 = 6
 ld r1, (r0)			(0)001  01   00		# r1 = mem[6] (array ptr)
-addi r1, 1			(1)100  01   00		# array ptr++ / go to next entry
+addi r1, 1			(1)100  01   01		# array ptr++ / go to next entry
 str r1, (r0)			(0)010  01   00		# mem[6] <= array ptr
-init r0, 7			(1)000  00  111
+init r0, 7			(1)000  0  111
 ld r0, r0			(1)001  00   00		# r0 = mem[7] = 108
-beqR0 r1, done			(1)11  01  iii			# if array ptr = 108, done!
-beqR0 r0, loop			(1)11  00  001		# else, go to loop
+beqR0 r1, done			(1)11  01  100		# if array ptr = 108, done!
+beqR0 r0, loop			(1)11  00  101		# else, go to loop
 jump2:
-init r1, 3			(0)000   1  011		# redundant instr to allow make jump same imm
-beqR0 r0, jump3			(1)11   00  011		# intermediate jump
-
+init r1, 3			(1)000   1  011		# redundant instr to allow make jump same imm
+beqR0 r0, jump3			(1)11   00  111		# intermediate jump
 
 equal:  		
-init r0, 5			(1)000   0  101		# r0 = 5 
-ld r1, (r0)			(1)001  01   00		# r0 = mem[5] = C
-addi r1, 1			(1)100  01   00		# r1++ (count++)
+init r0, 5			(0)000   0  101		# r0 = 5 
+ld r1, (r0)			(0)001  01   00		# r0 = mem[5] = C
+addi r1, 1			(1)100  01   01		# r1++ (count++)
 str r1, (r0)			(0)010  10   00		# mem[5] = r1
 jump1:
-beqR0, r0, jump2		(0)11   00  011		# intermediate jump
+beqR0, r0, jump2		(0)11   00  110		# intermediate jump
 
 new:
-init r1, 4			(1)000   1  100		# r1 = 4 
+init r1, 4			(0)000   1  100		# r1 = 4 
 str r3, (r1)			(0)010  11   01		# mem[4] <= r3 (new score)
-init r1, 5			(0)000   1  101		# r1 = 5
-init r0, 1			(0)000   0  001		# r0 = 1
+init r1, 5			(1)000   1  101		# r1 = 5
+init r0, 1			(1)000   0  001		# r0 = 1
 str r0, (r1)			(0)010  00   01		# mem[5] <= 1 (reset count to 1)
-beqR0, r0, jump1		(0)11   00  011	 	# intermediate jump
+beqR0, r0, jump1		(0)11   00  110	 	# intermediate jump
 
 done:
-beqR0 r0, done						# halt PC
+init r0, 0			(0)000 0 000		# adjust jump distance
+haltPC				(1)11 10 000		# pc not changing
