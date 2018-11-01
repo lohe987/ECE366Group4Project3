@@ -1,39 +1,45 @@
+# Ed
 # F.A.S.T. Prog 1
 
 Assembly:	Machine Code:	
 		
 addi r3, 1   	(1)1000101 		# register that will be exponentiated i.e. 6^p
-init r1, 7   	(1)0001110		# keep an incrementer in memory
-str r0, (r1) 	(0)0100001		# mem[7] = 0 initially
+init r1, 6   	(1)0001110		# keep an incrementer in memory
+str r0, (r1) 	(0)0100001		# mem[6] = 0 initially
 
 loop:		
-init r1, 0	(1)0001000 		# r1 = 0
-ld r1, r1	(1)0010101			# r1 = mem[0] = P
-beqR0 r1 finish	(0)1101111		# if incrementer == P, finish
+init r0, 0	(1)0000000 		# r0 = 0
+ld r0, r0	(1)0010000 		# r0 = mem[0] = P
+beqR0 r1 finish	(0)1101111		# if P (r0) == incrementer (r1), finish
 					# else do exponentiation
-addR  r3	(0)0110011			# r2 = r3 + r3 = 1 + 1
+addR  r3	(0)0110011		# r2 = r3 + r3 = 1 + 1
 addR2 r3	(1)0111011		# r2 = r2 + r3 = 1 + 2 = 3
 addR3 r2	(1)0111110		# r3 = r2 + r2 = 3 + 3 = 6
-
+init r0, 7	(1)000 0 111	  	# r0 = 7
+str r3, r0	(1)010 11 00		# mem[7] = r3
+ 
 mod:
-addi r2, 1	(1)1001001		# r2 = 1
-ld r2, r2	(1)0011010		# r2 = mem[1] = Q
+init r1, 1	(0)0001001 		# r1 = 1
+ld r2, r1	(1)0011010		# r2 = mem[1] = Q
 subR3 r2	(0)0110110		# r3 = r3 - r2 
-addi r2, 0	(0)1001000		# r2 = 0
-sltR0 r3, r2	(1)1011110		# if r3 < 0 then r0 = 1
-addi r1, 1	(1)1000101		# r1 = 1
+init r1, 0	(0)0001000	 	# r2 = 0
+sltR0 r3, r1	(1)1011110		# if r3 < 0 then r0 = 1
+init  r1, 1	(1)1000101		# r1 = 1
 beqR0 r1, done	(0)1101100		# if r3 < 0, branch out
 beqR0 r0, mod	(1)1100010		# otherwise keep subtracting
 
 done:
 addi r1, 1	(1)1000101		# r1 = 1 + 1 = 2
-str r3, r1	(0)0101101		# mem[2] = R = r3
-init r0, 7	(0)0000110		# r0 = 7
-ld r0, r0	(1)0010000		# r0 = mem[7] = incrementer
-addi r0, 1	(0)1000001		# incrementer++
+str r3, r1	(0)0101101		# R => mem[2]
+init r0, 6	(0)0000110		# r0 = 6
+ld r1, r0	(1)0010000		# r1 <= mem[6] = incrementer
+addi r1, 1	(0)1000001		# r1 ++ (incrementer++)
+str r1, r0      (0)0100100    		# mem[6] <= incrementer
+addi r0, 1	(1)1000000			# r0 = 6 + 1 = 7
+ld r3, r0	(1)0011100			# r3 = mem[7]
 beqR0 r0, loop	(0)1100000		# jump back to loop
 
 finish:
-
+beqR0 r0, finish ()1100iii		# halt PC
 
 
