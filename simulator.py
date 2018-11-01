@@ -139,7 +139,8 @@ def run_program(cpu):
         if cpu.PC >= len(cpu.instructions):
             finished = True
 
-        print(cpu.R)
+        #print(cpu.R)
+        #print(cpu.memory[0:10])
 
     return cpu
 
