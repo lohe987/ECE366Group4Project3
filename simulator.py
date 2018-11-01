@@ -50,6 +50,7 @@ def run_program(cpu):
     while(not finished):
         instr = cpu.instructions[cpu.PC]
         if not check_parity_bit(instr):
+            print(instr)
             print("ERROR: Parity Bit Error")
             sys.exit()
 
@@ -60,10 +61,21 @@ def run_program(cpu):
             cpu.PC = cpu.PC + 1
             cpu.DIC = cpu.DIC + 1
         elif instr[1:6] == "01100":
-            # Add instruction
-            Rx = registers[instr[4:6]]
-            Ry = registers[instr[6:8]]
-            cpu.R[Rx] = cpu.R[Rx] + cpu.R[Ry]
+            # AddR instruction
+            Rx = registers[instr[6:8]]
+            cpu.R[2] = cpu.R[Rx] + cpu.R[Rx]
+            cpu.PC = cpu.PC + 1
+            cpu.DIC = cpu.DIC + 1
+        elif instr[1:6] == "01111":
+            # AddR3 instruction
+            Rx = registers[instr[6:8]]
+            cpu.R[3] = cpu.R[Rx] + cpu.R[Rx]
+            cpu.PC = cpu.PC + 1
+            cpu.DIC = cpu.DIC + 1
+        elif instr[1:6] == "01110":
+            # AddR2 instruction
+            Rx = registers[instr[6:8]]
+            cpu.R[2] = cpu.R[2] + cpu.R[Rx]
             cpu.PC = cpu.PC + 1
             cpu.DIC = cpu.DIC + 1
         elif instr[1:6] == "01101":
@@ -98,6 +110,8 @@ def run_program(cpu):
             imm = imm_mux[instr[5:8]]
             if cpu.R[Rx] == cpu.R[0]:
             	cpu.PC = cpu.PC + imm
+            else:
+                cpu.PC = cpu.PC + 1
             cpu.DIC = cpu.DIC + 1
         elif instr[1:4] == "100":
 		    # Add immediate
@@ -125,6 +139,8 @@ def run_program(cpu):
         if cpu.PC >= len(cpu.instructions):
             finished = True
 
+        print(cpu.R)
+
     return cpu
 
 registers = {"00" : 0,
@@ -132,20 +148,21 @@ registers = {"00" : 0,
              "10" : 2,
              "11" : 3}
 
-imm_mux = {"000": -19,
+imm_mux = {"000": -24,
 		   "001": -12,
 		   "010": -7,
 		   "011": -6,
-		   "100": 2,
+		   "100": 3,
 		   "101": 10,
 		   "110": 12,
-		   "111": 18}
+		   "111": 23}
 
 if __name__ == "__main__":
     cpu1 = CPU()
-    cpu1 = load_program(cpu1, "simpleProgram.txt", "simpleMemory.txt")
-    #print(cpu1.memory[0:5])
+    cpu1 = load_program(cpu1, "prog1_binary.txt", "simpleMemory.txt")
+    print(cpu1.memory[0:10])
+    print(cpu1.R)
     cpu1 = run_program(cpu1)
     print("Registers: " + str(cpu1.R))
     print("DIC: " + str(cpu1.DIC))
-    print(cpu1.memory[0:5])
+    print(cpu1.memory[0:10])
