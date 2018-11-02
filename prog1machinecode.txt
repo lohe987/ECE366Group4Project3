@@ -33,7 +33,7 @@ init r0, 6	(0)0000110		# r0 = 6
 ld r1, r0	(1)0010000		# r1 <= mem[6] = incrementer
 addi r1, 1	(1)1000101		# r1 ++ (incrementer++)
 str r1, r0      (0)0100100    		# mem[6] <= incrementer
-addi r0, 1	(0)1000001		# r0 = 6 + 1 = 7
+init r0, 2 #addi r0, 1	(0)1000001		# r0 = 6 + 1 = 7 # change here
 ld r3, r0	(1)0011100		# r3 = mem[7]
 beqR0 r0, loop	(0)1100000		# jump back to loop
 
