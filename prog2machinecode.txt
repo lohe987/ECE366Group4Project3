@@ -61,7 +61,7 @@ init r1, 5			(1)0001101		# r1 = 5
 init r0, 1			(1)0000001		# r0 = 1
 str r0, (r1)			(0)0100001		# mem[5] <= 1 (reset count to 1)
 beqR0, r0, jump1		(0)1100110	 	# intermediate jump
+init r0, 0			(0)0000000		# 
 
 done:
-init r0, 0			(0)0000000		# adjust jump distance
 haltPC				(1)1110000		# pc not changing
