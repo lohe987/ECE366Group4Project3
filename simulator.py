@@ -23,7 +23,7 @@ def load_program(cpu, instr_file_name, memory_file_name):
 
     for line in instr_file:
         line = line.strip()
-        if len(line) < 1 or line.startswith("#"):
+        if len(line) < 1 or line.startswith("#") or line.startswith("U"):
             continue
         line = line.split(" ")
         cpu.instructions.append(line[0])
@@ -58,6 +58,11 @@ def run_program(cpu):
             cpu.R[3] = cpu.R[3] ^ cpu.R[2]
             cnt = str(bin(cpu.R[3])).count("1")
             cpu.R[3] = 16 - cnt # 16 bit integers
+            cpu.PC = cpu.PC + 1
+            cpu.DIC = cpu.DIC + 1
+        elif instr[1:8] == "1110000":
+            # Halt Command
+            finished = True
             cpu.PC = cpu.PC + 1
             cpu.DIC = cpu.DIC + 1
         elif instr[1:6] == "01100":
@@ -135,10 +140,6 @@ def run_program(cpu):
             print("Error Unknown command")
             sys.exit()
 
-        # Check if end of program
-        if cpu.PC >= len(cpu.instructions):
-            finished = True
-
         #print(cpu.R)
         #print(cpu.memory[0:10])
 
@@ -151,7 +152,7 @@ registers = {"00" : 0,
 
 imm_mux = {"000": -24,
 		   "001": -12,
-		   "010": -7,
+		   "010": -5, # -7
 		   "011": -6,
 		   "100": 3,
 		   "101": 10,
@@ -160,9 +161,10 @@ imm_mux = {"000": -24,
 
 if __name__ == "__main__":
     cpu1 = CPU()
-    cpu1 = load_program(cpu1, "prog1_binary.txt", "simpleMemory.txt")
+    cpu1 = load_program(cpu1, "prog1_group_4_p1_bin.txt", "simpleMemory.txt")
     print(cpu1.memory[0:10])
     print(cpu1.R)
+    print(cpu1.instructions)
     cpu1 = run_program(cpu1)
     print("Registers: " + str(cpu1.R))
     print("DIC: " + str(cpu1.DIC))
