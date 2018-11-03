@@ -1,20 +1,22 @@
 # Ed
 # F.A.S.T. Prog 1
 
-Assembly:	Machine Code:	
-		
+Assembly:	Machine Code:
+
 addi r3, 1   	(0)1001101 		# register that will be exponentiated i.e. 6^p
 init r1, 6   	(1)0001110		# keep an incrementer in memory
-str r0, (r1) 	(0)0100001		# mem[6] = 0 initially
+str r0, r1 		(0)0100001		# mem[6] = 0 initially
 
-loop:		
+loop:
 init r0, 0	(0)0000000 		# r0 = 0
 ld r0, r0	(1)0010000 		# r0 = mem[0] = P
+beqR0 r1, finish	(0)1101111		# if P (r0) == incrementer (r1), finish
 beqR0 r1 finish	(1)1101000		# if P (r0) == incrementer (r1), finish
 					# else do exponentiation
 addR  r3	(0)0110011		# r2 = r3 + r3 = 1 + 1
 addR2 r3	(1)0111011		# r2 = r2 + r3 = 1 + 2 = 3
 addR3 r2	(1)0111110		# r3 = r2 + r2 = 3 + 3 = 6
+
 mod:
 init r1, 1	(0)0001001 		# r1 = 1
 ld r2, r1	(1)0011001		# r2 = mem[1] = Q
@@ -34,6 +36,10 @@ init r0, 2 #addi r0, 1	(0)1000001		# r0 = 6 + 1 = 7 # change here
 ld r3, r0	(1)0011100		# r3 = mem[7]
 beqR0 r0, loop	(0)1100011		# jump back to loop
 
+init r0, 2 #addi r0, 1	(0)1000001		# r0 = 6 + 1 = 7 # change here
+ld r3, r0	(1)0011100		# r3 = mem[7]
+beqR0 r0, loop	(0)1100000		# jump back to loop
+
+
 finish:
 haltPC		(1)11 10 000		# PC not changing
-
