@@ -11,10 +11,13 @@ loop:
 init r0, 0	(0)0000000 		# r0 = 0
 ld r0, r0	(1)0010000 		# r0 = mem[0] = P
 beqR0 r1, finish	(0)1101111		# if P (r0) == incrementer (r1), finish
+beqR0 r1 finish	(1)1101000		# if P (r0) == incrementer (r1), finish
+
 					# else do exponentiation
 addR  r3	(0)0110011		# r2 = r3 + r3 = 1 + 1
 addR2 r3	(1)0111011		# r2 = r2 + r3 = 1 + 2 = 3
 addR3 r2	(1)0111110		# r3 = r2 + r2 = 3 + 3 = 6
+
 init r0, 7	(1)000 0 111	  	# r0 = 7
 str r3, r0	(1)010 11 00		# mem[7] = r3
 
@@ -22,8 +25,13 @@ mod:
 init r1, 1	(0)0001001 		# r1 = 1
 ld r2, r1	(1)0011001		# r2 = mem[1] = Q
 sltR0 r3, r2	(1)1011110		# if r3 < r2 then r0 = 1
+
 beqR0 r1, done	(0)1101100		# if r3 < 0, branch out
 subR3 r2	(0)0110110		# r3 = r3 - r2
+
+beqR0 r1, done	(0)1101001		# if r3 < 0, branch out
+subR3 r2	(0)0110110		# r3 = r3 - r2 
+
 beqR0 r0, mod	(1)1100010		# otherwise keep subtracting
 
 done:
@@ -33,9 +41,11 @@ init r0, 6	(0)0000110		# r0 = 6
 ld r1, r0	(1)0010000		# r1 <= mem[6] = incrementer
 addi r1, 1	(1)1000101		# r1 ++ (incrementer++)
 str r1, r0      (0)0100100    		# mem[6] <= incrementer
+
 init r0, 2 #addi r0, 1	(0)1000001		# r0 = 6 + 1 = 7 # change here
 ld r3, r0	(1)0011100		# r3 = mem[7]
 beqR0 r0, loop	(0)1100000		# jump back to loop
+
 
 finish:
 haltPC		(1)11 10 000		# PC not changing
