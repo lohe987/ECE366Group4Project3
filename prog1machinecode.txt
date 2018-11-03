@@ -15,8 +15,6 @@ beqR0 r1 finish	(1)1101000		# if P (r0) == incrementer (r1), finish
 addR  r3	(0)0110011		# r2 = r3 + r3 = 1 + 1
 addR2 r3	(1)0111011		# r2 = r2 + r3 = 1 + 2 = 3
 addR3 r2	(1)0111110		# r3 = r2 + r2 = 3 + 3 = 6
-init r0, 7	(1)000 0 111	  	# r0 = 7
-str r3, r0	(1)010 11 00		# mem[7] = r3
 mod:
 init r1, 1	(0)0001001 		# r1 = 1
 ld r2, r1	(1)0011001		# r2 = mem[1] = Q
@@ -32,8 +30,6 @@ init r0, 6	(0)0000110		# r0 = 6
 ld r1, r0	(1)0010000		# r1 <= mem[6] = incrementer
 addi r1, 1	(1)1000101		# r1 ++ (incrementer++)
 str r1, r0      (0)0100100    		# mem[6] <= incrementer
-addi r0, 1	(0)1000001		# r0 = 6 + 1 = 7
-ld r3, r0	(1)0011100		# r3 = mem[7]
 beqR0 r0, loop	(0)1100011		# jump back to loop
 
 finish:
