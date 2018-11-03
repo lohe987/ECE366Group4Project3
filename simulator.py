@@ -1,6 +1,5 @@
 import sys
 import collections
-import itertools
 
 # Class CPU will hold the information of the CPU
 class CPU:
@@ -17,20 +16,6 @@ def check_parity_bit(machine_line):
     if one_zero_dict["1"] % 2 == 0:
         return True
     return False
-
-def convert_imm_value(number):
-    if int(number) < 0:
-        number = 0xFFFF - int(number[1:]) + 1
-    return format(int(number), "016b")
-
-def xor(a, b):
-    result = ""
-    for c,d in zip(a,b):
-        if c == d:
-            result = result + "0"
-        else:
-            result = result + "1"
-    return result
 
 def load_program(cpu, instr_file_name, memory_file_name):
     instr_file = open(instr_file_name, "r")
@@ -70,12 +55,9 @@ def run_program(cpu):
             sys.exit()
 
         if instr[1:8] == "1110111":
-            #cpu.R[3] = cpu.R[3] ^ cpu.R[2]
-            #cnt = str(bin(cpu.R[3])).count("1")
-            a = convert_imm_value(cpu.R[3])
-            b = convert_imm_value(cpu.R[2])
-            result = collections.Counter(xor(a,b))
-            cpu.R[3] = result["0"]
+            cpu.R[3] = cpu.R[3] ^ cpu.R[2]
+            cnt = str(bin(cpu.R[3])).count("1")
+            cpu.R[3] = 16 - cnt # 16 bit integers
             cpu.PC = cpu.PC + 1
             cpu.DIC = cpu.DIC + 1
         elif instr[1:8] == "1110000":
