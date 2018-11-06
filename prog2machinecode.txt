@@ -50,7 +50,7 @@ equal:
 init r0, 5			(0)0000101		# r0 = 5 
 ld r1, (r0)			(0)0010100		# r0 = mem[5] = C
 addi r1, 1			(1)1000101		# r1++ (count++)
-str r1, (r0)			(0)0101000		# mem[5] = r1
+str r1, (r0)			(0)0100100		# mem[5] = r1
 jump1:
 beqR0, r0, jump2		(0)1100011		# intermediate jump
 
