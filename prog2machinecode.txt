@@ -26,7 +26,7 @@ ld r3, (r1)			(0)0011101      	# r3 = mem[8] = Pattern_Arr
 scr r3, r2 			(0)1110111      	# find score r3 and str in r3
 init r1, 4			(0)0001100		# r1 = 4
 ld r0, (r1)			(0)0010001		# r0 = mem[4] = S (highest score)
-beqR0, r3, equal		(0)1111100	 	# if new scr == S, go to equal
+beqR0, r3, equal		(0)1111110	 	# if new scr == S, go to equal
 init r1, 1			(0)0001001		# redundant instr to allow jump same imm
 init r1, 1			(0)0001001		# redundant
 sltR0 r0, r3			(0)1010011		# if new scr > S, r0 = 1
@@ -50,9 +50,9 @@ equal:
 init r0, 5			(0)0000101		# r0 = 5 
 ld r1, (r0)			(0)0010100		# r0 = mem[5] = C
 addi r1, 1			(1)1000101		# r1++ (count++)
-str r1, (r0)			(0)0101000		# mem[5] = r1
+str r1, (r0)			(0)0100100		# mem[5] = r1
 jump1:
-beqR0, r0, jump2		(0)1100110		# intermediate jump
+beqR0, r0, jump2		(0)1100011		# intermediate jump
 
 new:
 init r1, 4			(0)0001100		# r1 = 4 
@@ -60,7 +60,7 @@ str r3, (r1)			(0)0101101		# mem[4] <= r3 (new score)
 init r1, 5			(1)0001101		# r1 = 5
 init r0, 1			(1)0000001		# r0 = 1
 str r0, (r1)			(0)0100001		# mem[5] <= 1 (reset count to 1)
-beqR0, r0, jump1		(0)1100110	 	# intermediate jump
+beqR0, r0, jump1		(0)1100011	 	# intermediate jump
 
 done:
 init r0, 0			(0)0000000		# adjust jump distance
